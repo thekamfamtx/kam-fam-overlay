@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KAM Fam Corner Overlay</title>
+
+<style>
+  body {
+    margin: 0;
+    background: transparent;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* 🧱 MAIN WIDGET */
+  .widget {
+    width: 420px;
+    height: 420px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0,0,0,0.65);
+    color: white;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    background: rgba(0,0,0,0.25);
+    letter-spacing: 1px;
+  }
+
+  /* CONTENT AREA */
+  .content {
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+  .subtitle { font-size: 12px; opacity: 0.9; margin-bottom: 10px; }
+
+  /* QR CODE */
+  #qrcode img {
+    width: 150px;
+    height: 150px;
+    background: white;
+    padding: 6px;
+    border-radius: 12px;
+  }
+
+  /* 🎬 NETFLIX VIDEO GRID */
+  .videoGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .videoCard {
+    width: 92%;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .videoCard:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  }
+
+  .videoCard img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .videoTitle {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 6px 8px 2px 8px;
+  }
+
+  .videoTime {
+    font-size: 11px;
+    opacity: 0.8;
+    padding: 0 8px 8px 8px;
+  }
+
+  .fade {
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.98);}
+    to {opacity: 1; transform: scale(1);}
+  }
+</style>
+</head>
+
+<body>
+
+<div class="widget" id="widget">
+
+  <div class="header">🚢 KAM FAM SOCIAL DECK</div>
+
+  <div class="content fade" id="slide">
+
+    <div class="title" id="title"></div>
+    <div class="subtitle" id="subtitle"></div>
+
+    <div id="qrcode"></div>
+    <div id="videos" class="videoGrid"></div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<script src="config.js"></script>
+
+<script>
+
+/* 🔄 SLIDES SYSTEM */
+const slides = [
+  { type: "qr", name: "facebook", title: "📘 FACEBOOK", subtitle: "Join the KAM Fam Community" },
+  { type: "qr", name: "instagram", title: "📸 INSTAGRAM", subtitle: "Behind the Scenes + Cruise Life" },
+  { type: "qr", name: "youtube", title: "🎬 YOUTUBE", subtitle: "New Videos Every Week" },
+  { type: "qr", name: "klub", title: "💬 KAM KLUB", subtitle: "Members Only Live Shows" },
+  { type: "qr", name: "merch", title: "🛍️ MERCH SHOP", subtitle: "Grab your KAM Fam gear" },
+  { type: "videos", title: "🎬 THIS WEEK ON KAM FAM", subtitle: "Upcoming releases" }
+];
+
+let index = 0;
+
+/* 🎨 LOAD SLIDE */
+function loadSlide(i) {
+  const slide = slides[i];
+
+  document.getElementById("title").innerText = slide.title;
+  document.getElementById("subtitle").innerText = slide.subtitle;
+
+  const qr = document.getElementById("qrcode");
+  const vids = document.getElementById("videos");
+
+  qr.innerHTML = "";
+  vids.innerHTML = "";
+
+  /* 📲 QR SLIDES */
+  if (slide.type === "qr") {
+    QRCode.toCanvas(CONFIG.social[slide.name], { width: 150 }, function (err, canvas) {
+      if (!err) qr.appendChild(canvas);
+    });
+  }
+
+  /* 🎬 VIDEO SLIDE */
+  if (slide.type === "videos") {
+    CONFIG.videos.forEach(v => {
+      const card = document.createElement("div");
+      card.className = "videoCard";
+
+      card.onclick = () => window.open(v.link, "_blank");
+
+      card.innerHTML = `
+        <img src="${v.thumb}" />
+        <div class="videoTitle">${v.title}</div>
+        <div class="videoTime">${v.time}</div>
+      `;
+
+      vids.appendChild(card);
+    });
+  }
+
+  const box = document.getElementById("slide");
+  box.classList.remove("fade");
+  void box.offsetWidth;
+  box.classList.add("fade");
+}
+
+/* 🔁 ROTATION */
+function nextSlide() {
+  index = (index + 1) % slides.length;
+  loadSlide(index);
+}
+
+loadSlide(index);
+setInterval(nextSlide, 9000);
+
+</script>
+
+</body>
+</html>
