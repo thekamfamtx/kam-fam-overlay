@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KAM Fam Cruise Overlay v6</title>
+<title>KAM Fam Overlay Glow v7</title>
 
 <style>
   body {
@@ -13,27 +13,47 @@
     font-family: Arial, sans-serif;
   }
 
-  /* 🚢 WIDGET */
+  /* 🚢 MAIN WIDGET */
   .widget {
-    width: 340px;
-    height: 340px;
+    width: 310px;
+    height: 310px;
     position: absolute;
     top: 20px;
     right: 20px;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 0 25px rgba(0,0,0,0.65);
     color: white;
     transition: background 0.5s ease;
+
+    /* ✨ DEFAULT GLOW */
+    box-shadow: 0 0 12px rgba(0,0,0,0.6);
+  }
+
+  /* ✨ ANIMATED GLOW LAYER */
+  .widget::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 2px;
+    background: transparent;
+    pointer-events: none;
+    animation: pulse 3s infinite;
+  }
+
+  @keyframes pulse {
+    0% { filter: blur(2px); opacity: 0.6; }
+    50% { filter: blur(5px); opacity: 1; }
+    100% { filter: blur(2px); opacity: 0.6; }
   }
 
   .content {
-    height: 340px;
+    height: 310px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 6px;
     text-align: center;
   }
 
@@ -42,38 +62,37 @@
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 4px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.85);
   }
 
   .subtitle {
     font-size: 11px;
     opacity: 0.95;
-    margin-bottom: 8px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.85);
   }
 
   /* QR */
   #qrcode img {
-    width: 140px;
-    height: 140px;
+    width: 130px;
+    height: 130px;
     background: white;
     padding: 6px;
     border-radius: 12px;
   }
 
-  /* 🎬 VIDEO CARD */
+  /* VIDEO CARD */
   .videoCard {
     width: 95%;
     border-radius: 12px;
     overflow: hidden;
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.12);
-    position: relative;
   }
 
   .videoCard img {
     width: 100%;
-    height: 130px;
+    height: 120px;
     object-fit: cover;
     display: block;
   }
@@ -81,27 +100,13 @@
   .videoTitle {
     font-size: 12px;
     font-weight: bold;
-    padding: 5px 8px 0 8px;
+    padding: 4px 8px 0 8px;
   }
 
   .videoTime {
     font-size: 11px;
     opacity: 0.85;
-    padding: 0 8px 8px 8px;
-  }
-
-  /* 🚨 BADGE */
-  .badge {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    background: rgba(255, 215, 0, 0.95);
-    color: black;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 3px 6px;
-    border-radius: 6px;
-    z-index: 10;
+    padding: 0 8px 6px 8px;
   }
 
   .fade {
@@ -141,17 +146,13 @@ const slides = [
   { type: "qr", name: "youtube", platform: "youtube", title: "🎬 YOUTUBE", subtitle: "New Videos Every Week" },
   { type: "qr", name: "klub", platform: "klub", title: "💬 KAM KLUB", subtitle: "Members Only Live Shows" },
   { type: "qr", name: "merch", platform: "merch", title: "🛍️ MERCH SHOP", subtitle: "Grab your KAM Fam gear" },
-
-  /* VIDEO 1 */
   { type: "video", platform: "video1", videoIndex: 0, title: "🎬 THIS WEEK", subtitle: "Featured Episode" },
-
-  /* VIDEO 2 */
-  { type: "video", platform: "video2", videoIndex: 1, title: "🎬 THIS WEEK", subtitle: "NEW Series" }
+  { type: "video", platform: "video2", videoIndex: 1, title: "🎬 THIS WEEK", subtitle: "Bonus Episode" }
 ];
 
 let index = 0;
 
-/* 🌊 CRUISE THEMES */
+/* 🌊 CRUISE + PLATFORM GLOW */
 function setTheme(platform) {
 
   const widget = document.getElementById("widget");
@@ -167,6 +168,19 @@ function setTheme(platform) {
   };
 
   widget.style.background = themes[platform];
+
+  /* ✨ GLOW COLOR MATCH */
+  const glow = {
+    facebook: "#1877F2",
+    instagram: "#dd2a7b",
+    youtube: "#ff0000",
+    klub: "#d4af37",
+    merch: "#00c853",
+    video1: "#4da3ff",
+    video2: "#4da3ff"
+  };
+
+  widget.style.boxShadow = `0 0 18px ${glow[platform]}66`;
 }
 
 /* 📺 LOAD SLIDE */
@@ -185,14 +199,14 @@ function loadSlide(i) {
   qr.innerHTML = "";
   vid.innerHTML = "";
 
-  /* 📲 QR */
+  /* QR */
   if (slide.type === "qr") {
-    QRCode.toCanvas(CONFIG.social[slide.name], { width: 140 }, function (err, canvas) {
+    QRCode.toCanvas(CONFIG.social[slide.name], { width: 130 }, function (err, canvas) {
       if (!err) qr.appendChild(canvas);
     });
   }
 
-  /* 🎬 VIDEO */
+  /* VIDEO */
   if (slide.type === "video") {
 
     const v = CONFIG.videos[slide.videoIndex];
@@ -201,7 +215,6 @@ function loadSlide(i) {
     card.className = "videoCard";
 
     card.innerHTML = `
-      <div class="badge">COMING THIS WEEK</div>
       <img src="${v.thumb}" />
       <div class="videoTitle">${v.title}</div>
       <div class="videoTime">${v.time}</div>
@@ -224,11 +237,6 @@ function nextSlide() {
 
 loadSlide(index);
 setInterval(nextSlide, 9000);
-
-</script>
-
-</body>
-</html>
 
 </script>
 
