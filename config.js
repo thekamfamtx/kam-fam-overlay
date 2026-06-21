@@ -9,19 +9,17 @@ social: {
   merch: "https://the-kam-fam-shop.fourthwall.com/"
 },
 
-/* 🎬 WEEKLY VIDEOS (2 SLOT SYSTEM) */
+/* 🎬 WEEKLY VIDEOS */
 videos: [
   {
     title: "Carnival Dream SEA Cruise Day 1 Part 1",
     time: "Tuesday 7:00 PM CST",
-    thumb: "images/video1.jpg",
-    link: "https://youtube.com/watch?v=VIDEO1"
+    thumb: "images/video1.jpg"
   },
   {
     title: "WHY WOULDA WEDNESDAYS | EPISODE 3",
     time: "Wednesday 12:34 PM",
-    thumb: "images/video2.jpg",
-    link: "https://youtube.com/watch?v=VIDEO2"
+    thumb: "images/video2.jpg"
   }
 ]
 
